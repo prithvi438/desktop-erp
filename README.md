@@ -1,4 +1,4 @@
-﻿# Speedo One Desktop ERP
+﻿#Desktop ERP
 
 A keyboard-first desktop application for accounting, billing, inventory and business reporting. Built with Electron and JavaScript, with a local PostgreSQL database managed by the app.
 
