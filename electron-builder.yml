@@ -1,0 +1,32 @@
+appId: com.speedoone.books
+productName: Speedo One Books
+directories:
+  output: dist
+  buildResources: build
+electronDist: node_modules/electron/dist
+npmRebuild: false
+# PostgreSQL executables and its worker must have physical filesystem paths.
+asar: false
+files:
+  - main.js
+  - preload.js
+  - src/**/*
+  - renderer/**/*
+  - build/icon.png
+  - package.json
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: build/icon.png
+  requestedExecutionLevel: asInvoker
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Speedo One Books
+  deleteAppDataOnUninstall: false
+  runAfterFinish: false
+artifactName: Speedo-One-Books-${version}-Setup-${arch}.${ext}

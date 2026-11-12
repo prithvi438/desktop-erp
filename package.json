@@ -1,0 +1,68 @@
+{
+  "name": "speedoone-pos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SpeedoOne desktop: keyboard-first local accounting",
+  "main": "main.js",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "dist:win": "node scripts/run-as-node.js scripts/build-windows.js",
+    "test": "node scripts/run-as-node.js scripts/test-postgres.js",
+    "test:sqlite": "node scripts/run-as-node.js --test test/books.test.js test/sync.test.js test/details.test.js test/retail.test.js test/backup.test.js test/catalog.test.js test/units.test.js test/inventory.test.js test/reporting.test.js test/report-books.test.js test/company-workspace.test.js test/bill-references.test.js",
+    "smoke": "node scripts/start.js test/smoke.js",
+    "smoke:startup": "node scripts/start.js test/startup-smoke.js",
+    "smoke:create": "node scripts/start.js test/create-smoke.js",
+    "smoke:browse": "node scripts/start.js test/browse-smoke.js",
+    "smoke:daybook": "node scripts/start.js test/daybook-smoke.js",
+    "smoke:registers": "node scripts/start.js test/registers-smoke.js",
+    "smoke:reports": "node scripts/start.js test/report-directory-smoke.js",
+    "smoke:entry": "node scripts/start.js test/entry-smoke.js",
+    "smoke:trading-ui": "node scripts/start.js test/trading-ui-smoke.js",
+    "smoke:settlement": "node scripts/start.js test/settlement-smoke.js",
+    "smoke:settlement-reopen": "node scripts/start.js test/settlement-reopen-smoke.js",
+    "smoke:pages": "node scripts/start.js test/pages-smoke.js",
+    "smoke:choices": "node scripts/start.js test/choices-smoke.js",
+    "smoke:ledger": "node scripts/start.js test/ledger-smoke.js",
+    "smoke:masters": "node scripts/start.js test/masters-smoke.js",
+    "smoke:inline": "node scripts/start.js test/inline-master-smoke.js",
+    "smoke:units": "node scripts/start.js test/units-smoke.js",
+    "smoke:accounts": "node scripts/start.js test/account-books-smoke.js",
+    "smoke:ledger-account": "node scripts/start.js test/ledger-account-smoke.js",
+    "smoke:creditor-statement": "node scripts/start.js test/creditor-statement-smoke.js",
+    "smoke:search": "node scripts/start.js test/type-search-smoke.js",
+    "smoke:manage": "node scripts/start.js test/manage-smoke.js",
+    "smoke:retail": "node scripts/start.js test/retail-smoke.js",
+    "smoke:details": "node scripts/start.js test/details-smoke.js",
+    "smoke:inventory": "node scripts/start.js test/inventory-smoke.js",
+    "smoke:context-masters": "node scripts/start.js test/context-master-smoke.js",
+    "smoke:report-exports": "node scripts/start.js test/report-export-smoke.js",
+    "smoke:companies": "node scripts/start.js test/company-workspace-smoke.js",
+    "smoke:references": "node scripts/start.js test/bill-references-smoke.js",
+    "smoke:workspace-layout": "node scripts/start.js test/workspace-layout-smoke.js",
+    "smoke:date-input": "node scripts/start.js test/date-input-smoke.js",
+    "smoke:presentation-openings": "node scripts/start.js test/presentation-opening-smoke.js",
+    "smoke:dashboard": "node scripts/start.js test/dashboard-charts-smoke.js",
+    "smoke:theme": "node scripts/start.js test/theme-smoke.js",
+    "smoke:workspace-actions": "node scripts/start.js test/workspace-actions-smoke.js",
+    "smoke:voucher-picker-layout": "node scripts/start.js test/voucher-picker-layout-smoke.js",
+    "smoke:user-profile": "node scripts/start.js test/user-profile-smoke.js",
+    "smoke:gst-entry": "node scripts/start.js test/gst-entry-smoke.js",
+    "smoke:report-heads": "node scripts/start.js test/report-heads-smoke.js",
+    "smoke:calculator": "node scripts/start.js test/calculator-smoke.js",
+    "smoke:reference-enter": "node scripts/start.js test/reference-enter-smoke.js"
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "26.0.12"
+  },
+  "dependencies": {
+    "embedded-postgres": "18.6.0-beta.19",
+    "exceljs": "^4.4.0",
+    "pg": "8.23.1"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
+  }
+}

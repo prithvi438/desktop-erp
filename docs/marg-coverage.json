@@ -1,0 +1,51 @@
+{
+  "reviewDate": "2026-11-09",
+  "priority": "Retail/distribution ERP first, confirmed by the user",
+  "design": "Preserve the existing keyboard workspaces, entry forms and sidebar",
+  "reviewScope": "Portal navigation and selected accessible tutorial descriptions/help articles. Linked videos and the entire product suite have not been exhaustively reviewed.",
+  "references": [
+    "https://tutorial.margcompusoft.com/",
+    "https://tutorial.margcompusoft.com/tutorial/100065",
+    "https://tutorial.margcompusoft.com/tutorial/110",
+    "https://tutorial.margcompusoft.com/tutorial/110-reorder-management-english",
+    "https://care.margcompusoft.com/margerp/re-order-management/2343/1/re-order",
+    "https://care.margcompusoft.com/margerp/outstandings"
+  ],
+  "implementedInThisBatch": [
+    "Customer credit amount limits and stop-billing control",
+    "Customer pricebook selection for new sale lines",
+    "Item discount and aggregate bill quantity limits, stop billing and rack reference",
+    "Optional expired-batch sale blocking and transaction date locking",
+    "Explicit bill matching for customer receipts and supplier payments, with on-account balances",
+    "Purchase suggestions from reorder thresholds and recent net demand; reviewable purchase-order drafts",
+    "Item, party, month, category and brand sales analysis with returns and discounts",
+    "CSV export of filtered report/list data",
+    "Consistent local backups and validated restore with a safety copy and disconnected sync",
+    "Upload-only default for new cloud connections, persistent retry ranges, restart recovery and clear failed/skipped import status"
+  ],
+  "existingWorkflowsRetained": [
+    "Sales/purchases, orders, quotations, returns, journals, payments and receipts",
+    "Masters, price tiers, batch inventory, bank reconciliation and cheques",
+    "Accounting statements, GST summaries, attachments and custom fields"
+  ],
+  "remainingRetailWork": [
+    "Challans, dispatch/picking, partial fulfillment and linked bill conversion",
+    "Multiple stores/godowns, transfers and physical stock counts",
+    "Schemes, bundles, free quantities, loyalty and temporary credit overrides",
+    "Bulk master/document import with mappings and preview validation",
+    "Invoice print templates, barcode-label layouts and peripheral integration",
+    "Operator permissions, approval limits and full change audit",
+    "Specialized replacement/breakage workflows and supplier claims",
+    "Live-business connector acceptance and additional cloud metadata coverage"
+  ],
+  "deferredProductAreas": ["Manufacturing", "Payroll/HR", "Hospitality", "Industry-specific and external paid services"],
+  "limits": [
+    "This is not full Marg feature parity.",
+    "Credit limits use current posted customer balance; unbilled orders are not cumulatively reserved against the limit.",
+    "Purchase planning does not subtract pending purchase orders; drafts require review before saving.",
+    "Explicit bill matching is separate from the existing FIFO ageing reports; unmatched opening balances are shown separately.",
+    "Sales analysis covers item document values before tax and extra charges, not ledger-only sales.",
+    "Retail policies, bill matching, pricebook definitions and attachments remain local under the current Tally API contract.",
+    "Cloud sync has automated contract tests, not live-business acceptance. Master rename/delete propagation is limited by name-based connector matching."
+  ]
+}
