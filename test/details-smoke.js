@@ -3,8 +3,8 @@ const {app,BrowserWindow,dialog}=require('electron');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openBooks}=require('../src/books');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-rich-'));
-process.env.SPEEDOONE_DATA_DIR=out;
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-rich-'));
+process.env.DESKTOP_ERP_DATA_DIR=out;
 const photo=path.join(out,'proof.png');
 fs.writeFileSync(photo,Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF9sAAAAASUVORK5CYII=','base64'));
 // Exercise the production file handler with deterministic native-picker results.

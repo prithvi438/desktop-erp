@@ -10,5 +10,4 @@ const channel = (name) => async (method, args) => {
 };
 
 contextBridge.exposeInMainWorld('books', { call: channel('books'), quit: () => ipcRenderer.send('quit') });
-contextBridge.exposeInMainWorld('sync', { call: channel('sync') });
 contextBridge.exposeInMainWorld('files', { call: channel('files') });

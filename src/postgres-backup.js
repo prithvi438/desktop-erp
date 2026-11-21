@@ -11,12 +11,12 @@ function* lines(file){
 }
 function columns(db,table){return db.dialect==='postgres'?db.query('SELECT column_name FROM information_schema.columns WHERE table_schema=$1 AND table_name=$2 ORDER BY ordinal_position',[db.schema,table]).rows.map(r=>r.column_name):db.prepare(`PRAGMA table_info(${identifier(table)})`).all().map(r=>r.name);}
 function createBackup(db,destination,version){
-  const temp=path.join(path.dirname(destination),`.speedoone-${crypto.randomUUID()}.tmp`),fd=fs.openSync(temp,'wx',0o600),hash=crypto.createHash('sha256');let transaction=false;
+  const temp=path.join(path.dirname(destination),`.desktop-erp-${crypto.randomUUID()}.tmp`),fd=fs.openSync(temp,'wx',0o600),hash=crypto.createHash('sha256');let transaction=false;
   const write=value=>{const line=JSON.stringify(value)+'\n';fs.writeSync(fd,line);hash.update(line);};
   try{
     db.exec(db.dialect==='postgres'?'BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY':'BEGIN');transaction=true;
     const tables=TABLES.map(name=>({name,columns:columns(db,name),count:db.prepare(`SELECT COUNT(*) AS n FROM ${identifier(name)}`).get().n}));
-    const header={format:'speedoone-postgres-backup',version,company:db.prepare("SELECT value FROM meta WHERE key='company_name'").get()?.value||'Unnamed company',tables};write(header);
+    const header={format:'desktop-erptgres-backup',version,company:db.prepare("SELECT value FROM meta WHERE key='company_name'").get()?.value||'Unnamed company',tables};write(header);
     for(const table of tables){
       if(db.dialect==='postgres'){
         db.query(`DECLARE backup_rows NO SCROLL CURSOR FOR SELECT * FROM ${identifier(table.name)}`);
@@ -36,7 +36,7 @@ function inspect(file,maxVersion){
     if(ended)throw Error('Unexpected data after backup checksum');
     const value=JSON.parse(line);
     if(!header){
-      header=value;if(header.format!=='speedoone-postgres-backup'||!Number.isInteger(header.version)||(header.version<8||header.version>maxVersion))throw Error('This backup needs a different version of Speedo One');
+      header=value;if(header.format!=='desktop-erptgres-backup'||!Number.isInteger(header.version)||(header.version<8||header.version>maxVersion))throw Error('This backup needs a different version of Desktop ERP');
       if(!Array.isArray(header.tables)||header.tables.length!==(header.version<9?TABLES.length-2:TABLES.length))throw Error('Invalid backup tables');
       const expectedTables=header.version<9?TABLES.slice(0,-2):TABLES;
       for(const table of header.tables){if(!expectedTables.includes(table.name)||counts.has(table.name)||!Array.isArray(table.columns)||!table.columns.length||!Number.isSafeInteger(table.count)||table.count<0)throw Error('Invalid backup table');table.columns.forEach(identifier);counts.set(table.name,0);}

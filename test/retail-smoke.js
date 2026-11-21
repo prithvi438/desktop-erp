@@ -2,7 +2,7 @@
 const {app,BrowserWindow,dialog,ipcMain}=require('electron');
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openBooks}=require('../src/books');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-retail-'));process.env.SPEEDOONE_DATA_DIR=out;
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-retail-'));process.env.DESKTOP_ERP_DATA_DIR=out;
 const backupFile=path.join(out,'test-backup.speedobook');
 dialog.showSaveDialog=async()=>({canceled:false,filePath:backupFile});
 dialog.showOpenDialog=async()=>({canceled:false,filePaths:[backupFile]});
@@ -38,15 +38,9 @@ app.whenReady().then(async()=>{
    await go('Manage Records');await press('l',['control']);await type('Buyer');await press('Enter');await press('PageDown');await press('PageDown');await fits();await shot('customer-controls');await press('Escape');
    await go('Create Vouchers');await type('Buyer');await press('Enter');await type('Widget');await press('Enter');await type('1');
    assert.equal(await js('document.querySelector(".lines tbody input[aria-label^=rate]").value'),'90.00');await press('s',['control']);
-   await go('Sync with Speedo One');await fits();await shot('sync-unlinked');
    await go('Backup & restore');await press('b',['alt']);await sleep(150);assert.equal(fs.existsSync(backupFile),true);
    const oldCompany=await api('company');await api('setCompany',{name:'Change after backup'});await press('r',['alt']);await sleep(700);
    assert.equal((await api('company')).name,oldCompany.name);assert.equal(await title(),'Dashboard');assert.ok(fs.readdirSync(out).some(name=>name.startsWith('before-restore-')));
-   // Exercise long paired status/error pages without connecting to a real business.
-   const status={paired:true,enabled:true,auto:false,busy:false,business:'Test business',businessId:'test-business-id',direction:'upload',server:'https://app.speedoone.com/api',mastersPending:true,lastSync:'2026-11-09T10:00:00Z',lastSuccess:'',waitingFrom:'2026-11-01',lastError:'Rejected records remain pending. '.repeat(20),last:{received:0,vouchers:{created:0,skipped:0,failed:1},masters:{created:0,merged:0,failed:1},conflicts:1,problems:['Please correct this record. '.repeat(30)]}};
-   ipcMain.removeHandler('sync');ipcMain.handle('sync',()=>({ok:true,value:status}));
-   await go('Sync with Speedo One');const sections=await js('document.querySelectorAll(".sync-group").length');assert.ok(sections>3);
-   for(let i=0;i<sections;i++){await fits();await press('PageDown');}await shot('sync-paired');
    console.log(`RETAIL SMOKE OK. Screenshots: ${out}`);app.exit(0);
  }catch(error){await shot('failure');console.error(`${error.stack}\nTitle: ${await title()}\nScreenshots: ${out}`);app.exit(1);}
 });

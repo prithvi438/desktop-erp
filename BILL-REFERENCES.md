@@ -38,7 +38,7 @@ Behavioural references are official TallyHelp pages:
 - [Adjust a sale against an advance](https://help.tallysolutions.com/sales-against-advance/)
 - [Set up receivables and payables tracking](https://help.tallysolutions.com/set-up-receivables-and-payables-tracking-in-tallyprime/)
 
-This implements bill references and credit controls in Speedo One's own accounting engine. It does not calculate GST liability on advances, statutory advance returns, interest, collection reminders or promised-payment workflows.
+This implements bill references and credit controls in Desktop ERP's own accounting engine. It does not calculate GST liability on advances, statutory advance returns, interest, collection reminders or promised-payment workflows.
 
 ## Adjust, clear and done
 
@@ -47,4 +47,4 @@ This implements bill references and credit controls in Speedo One's own accounti
 - **Done / cleared bills** lists references whose remaining amount is zero. Status is calculated from allocations: Pending, Partly adjusted, or Done. Marking a dialog Done accepts its rows; it is not a write-off.
 - **Undo adjustment (Alt+U)** is a separate action with confirmation. It removes a match, reopens that amount on the bill and leaves the original payment/receipt amount On Account. Ledger postings and net balance remain unchanged. The undone-adjustments view records this operation.
 
-Official Marg documentation lists New reference, Adj Ref and Clear in its bill-adjustment window: https://care.margcompusoft.com/margerp/gst-outward/37084/1/gst-outward . It does not establish every label's exact semantics. Speedo One's Clear action follows the user's explicit choice to settle a pending bill.
+Official Marg documentation lists New reference, Adj Ref and Clear in its bill-adjustment window: https://care.margcompusoft.com/margerp/gst-outward/37084/1/gst-outward . It does not establish every label's exact semantics. Desktop ERP's Clear action follows the user's explicit choice to settle a pending bill.

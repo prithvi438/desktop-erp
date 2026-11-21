@@ -1,3 +1,4 @@
+require('./legacy-compat');
 'use strict';
 // Accounting and inventory engine over local PostgreSQL (SQLite for legacy import/tests).
 // Money is integer paise. Entry amounts are signed: positive = debit, negative = credit.
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS ledgers (
   group_id INTEGER NOT NULL REFERENCES groups(id),
   opening INTEGER NOT NULL DEFAULT 0
 );
--- uuid and updated_at exist so vouchers can later sync to the SpeedoOne server.
+-- uuid and updated_at exist so vouchers can later sync to the DesktopERP server.
 CREATE TABLE IF NOT EXISTS vouchers (
   id INTEGER PRIMARY KEY,
   uuid TEXT NOT NULL UNIQUE,
@@ -128,7 +129,7 @@ CREATE INDEX order_lines_voucher ON order_lines (voucher_id);
 `, `
 -- rev goes up on every local change; the server is told it so it can see an edit.
 ALTER TABLE vouchers ADD COLUMN rev INTEGER NOT NULL DEFAULT 1;
--- The number a voucher carries on the Speedo One server, when it came from there.
+-- The number a voucher carries on the Desktop ERP server, when it came from there.
 ALTER TABLE vouchers ADD COLUMN ref TEXT NOT NULL DEFAULT '';
 `, `
 CREATE TABLE pricebooks (
@@ -252,7 +253,7 @@ function splitTax(tax, interstate) {
 }
 
 function openBooks(file,{driver}={}) {
-  const db = driver!=='sqlite'&&process.env.SPEEDOONE_PG_URL ? new (require('./postgres').PostgresDatabase)(file) : new DatabaseSync(file);
+  const db = driver!=='sqlite'&&process.env.DESKTOP_ERP_PG_URL ? new (require('./postgres').PostgresDatabase)(file) : new DatabaseSync(file);
   try {
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   for (let version = db.prepare('PRAGMA user_version').get().user_version; version < MIGRATIONS.length; version++) {

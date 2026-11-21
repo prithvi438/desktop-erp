@@ -1,6 +1,6 @@
-# Speedo One Books (desktop)
+# Desktop ERP (desktop)
 
-Keyboard-first accounting, billing and inventory for Windows and macOS, modelled on the Books module of Speedo One. Books are stored in a local PostgreSQL server that the desktop app starts and stops automatically. It listens only on 127.0.0.1; no internet connection is required.
+Keyboard-first accounting, billing and inventory for Windows and macOS, modelled on the Books module of Desktop ERP. Books are stored in a local PostgreSQL server that the desktop app starts and stops automatically. It listens only on 127.0.0.1; no internet connection is required.
 
 ## Run
 
@@ -20,17 +20,17 @@ Use Node.js 22.12 or newer to install dependencies. The app and tests run on the
 
 ## Windows installer
 
-Run `npm run dist:win` on Windows after installing dependencies. The x64 installer is written to `dist/Speedo-One-Books-0.1.0-Setup-x64.exe`. It includes Electron and PostgreSQL; the destination computer does not need Node.js. The assisted installer offers an installation directory and creates desktop and Start menu shortcuts. It does not publish a release or launch the app automatically.
+Run `npm run dist:win` on Windows after installing dependencies. The x64 installer is written to `dist/Desktop-ERP-0.1.0-Setup-x64.exe`. It includes Electron and PostgreSQL; the destination computer does not need Node.js. The assisted installer offers an installation directory and creates desktop and Start menu shortcuts. It does not publish a release or launch the app automatically.
 
-Installed builds use the same `%APPDATA%\speedoone-pos` data folder as development builds. Close the running development app before opening the installed app. Uninstalling preserves the books data. PostgreSQL binaries and application files are packaged without ASAR so executable and worker paths remain directly accessible. This local test installer is unsigned unless signing credentials are configured in the build environment.
+Installed builds use the same `%APPDATA%\desktop-erp` data folder as development builds. Close the running development app before opening the installed app. Uninstalling preserves the books data. PostgreSQL binaries and application files are packaged without ASAR so executable and worker paths remain directly accessible. This local test installer is unsigned unless signing credentials are configured in the build environment.
 
-Data lives in Electron's user-data folder (`%APPDATA%\speedoone-pos` on Windows, `~/Library/Application Support/speedoone-pos` on macOS). Set `SPEEDOONE_DATA_DIR` before starting to use a different folder. PostgreSQL stores its cluster in `postgres/`; the random database password and selected loopback port are kept in `postgres.credentials`, encrypted by the OS in the desktop app. Preserve that credentials file with the cluster. Never copy a running cluster as a backup; use Settings → Backup & restore.
+Data lives in Electron's user-data folder (`%APPDATA%\desktop-erp` on Windows, `~/Library/Application Support/desktop-erp` on macOS). Set `DESKTOP_ERP_DATA_DIR` before starting to use a different folder. PostgreSQL stores its cluster in `postgres/`; the random database password and selected loopback port are kept in `postgres.credentials`, encrypted by the OS in the desktop app. Preserve that credentials file with the cluster. Never copy a running cluster as a backup; use Settings → Backup & restore.
 
 On first launch, an existing `books.db` is read through a consistent SQLite snapshot, upgraded in a temporary copy, and imported into PostgreSQL in one transaction. Every inserted record and every table count is verified, including embedded file bytes. IDs, balances, custom groups and existing cloud pairing are retained. The original SQLite file remains unchanged; a `sqlite-migration-<timestamp>.speedobook` archive is also kept. Later launches use PostgreSQL and do not re-import SQLite. A failed migration opens no working window and leaves the SQLite source intact.
 
 Backups now use `.speedobook`: a versioned, checksummed, streamed data archive including attachments. Restore verifies the archive before replacing data, verifies inserted values and counts, and rolls back on any constraint or checksum failure. It also writes a safety backup and unlinks cloud sync. Backup schema versions must match the app. The retained SQLite file is a pre-migration rollback point only: returning to it after new PostgreSQL entries would omit those entries. Keep PostgreSQL backups for ongoing recovery.
 
-`SPEEDOONE_PG_URL` is an optional developer/test connection override; the desktop normally manages its local service. The synchronous accounting API is retained through a PostgreSQL worker connection, with bound parameters, 64-bit integer storage and checked JavaScript integer conversion. One process owns each books dataset at a time; this change does not enable concurrent terminals or redesign list/report pagination.
+`DESKTOP_ERP_PG_URL` is an optional developer/test connection override; the desktop normally manages its local service. The synchronous accounting API is retained through a PostgreSQL worker connection, with bound parameters, 64-bit integer storage and checked JavaScript integer conversion. One process owns each books dataset at a time; this change does not enable concurrent terminals or redesign list/report pagination.
 
 ## What it does
 
@@ -48,18 +48,9 @@ Backups now use `.speedobook`: a versioned, checksummed, streamed data archive i
 
 A sale takes the batch that expires first unless another is chosen, and is refused when the batch does not hold enough. Stock is valued at the item's average purchase cost.
 
-## Sync with Speedo One
+## Legacy connection support
 
-Books are offline until they are linked under Settings, Sync with Speedo One. Linking signs in once, picks a business, and stores a key for this computer; the password is not kept. New connections default to **Local to Speedo One**. Select **Two-way** before linking only when incoming web changes are also wanted. The key is encrypted by the operating system and held in `sync.key` beside the books file.
-
-Sync uses the server's Tally agent API (`/api/tally-agent/*` in Speedoone-Backend), so the books appear on the web as a Tally connection under Accounting, Tally sync. Two-way rounds take permitted server changes first; upload-only rounds leave incoming jobs untouched. Both upload ledgers, items and complete changed voucher windows when server settings permit. F5 runs a round; with automatic sync on, one runs every minute. Rejected uploads remain pending, and interrupted voucher ranges recover after restart. Backdated entries outside the connection period and disabled import types are reported instead of silently acknowledged. Status distinguishes the last attempt from the last fully successful round and pages through long errors with PgUp/PgDn.
-
-- A voucher changed in both places is not merged. The server lists it as a conflict to settle on the web.
-- Quotations and stock journals are not uploaded: the connector takes no vouchers of those types. Pricebook definitions and cheque register metadata also stay local; cheque accounting vouchers are included in normal voucher sync. Sync is not a complete backup.
-- The sync screen shows the linked business ID. Alt+E pauses or enables sync while preserving the link. Pausing disables automatic sync and prevents manual upload; local work continues. Unlink before changing businesses. Settings cannot unlink a business during a running sync.
-- A sale or purchase made on the web arrives with its accounting entries and item quantities as the server recorded them; batch expiry is not sent by the server.
-
-`test/sync.test.js` runs the sync against a stand-in server written from the backend code. It has not been run against the live server.
+The desktop application no longer exposes or starts cloud synchronization. Legacy data identifiers are retained only for backward compatibility.
 
 ## Retail/distribution extensions
 

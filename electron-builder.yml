@@ -1,5 +1,5 @@
-appId: com.speedoone.books
-productName: Speedo One Books
+appId: com.desktoperp.books
+productName: Desktop ERP
 directories:
   output: dist
   buildResources: build
@@ -12,13 +12,11 @@ files:
   - preload.js
   - src/**/*
   - renderer/**/*
-  - build/icon.png
   - package.json
 win:
   target:
     - target: nsis
       arch: [x64]
-  icon: build/icon.png
   requestedExecutionLevel: asInvoker
 nsis:
   oneClick: false
@@ -26,7 +24,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Speedo One Books
+  shortcutName: Desktop ERP
   deleteAppDataOnUninstall: false
   runAfterFinish: false
-artifactName: Speedo-One-Books-${version}-Setup-${arch}.${ext}
+artifactName: Desktop-ERP-${version}-Setup-${arch}.${ext}

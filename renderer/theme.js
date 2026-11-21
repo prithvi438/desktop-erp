@@ -1,6 +1,6 @@
 // Loaded before the stylesheet to restore appearance without a light-theme flash.
 (()=>{
- const key='speedoone-appearance';let saved;try{saved=localStorage.getItem(key);}catch{}
+ const key='desktop-erp-appearance';let saved;try{saved=localStorage.getItem(key);}catch{}
  const root=document.documentElement;
  const apply=value=>{root.dataset.theme=value;root.style.colorScheme=value;const button=document.getElementById('theme-toggle');if(button){button.textContent=value==='dark'?'Light mode':'Dark mode';button.setAttribute('aria-label','Switch to '+(value==='dark'?'light':'dark')+' mode (Ctrl+Shift+L)');button.setAttribute('aria-pressed',String(value==='dark'));}};
  apply(['light','dark'].includes(saved)?saved:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');

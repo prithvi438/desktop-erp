@@ -9,7 +9,7 @@ function validate(data){
 }
 const amountFormat='#,##,##0.00;(#,##,##0.00);"—"';
 async function workbook(data){
-  validate(data);const book=new ExcelJS.Workbook();book.creator='Speedo One';book.created=new Date();
+  validate(data);const book=new ExcelJS.Workbook();book.creator='Desktop ERP';book.created=new Date();
   const sheet=book.addWorksheet('Report',{pageSetup:{paperSize:9,orientation:data.columns.length>5?'landscape':'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0},views:[{state:'frozen',ySplit:5}]});
   const width=data.columns.length;
   for(const value of [data.company?.name||'Company',data.title||'Report',data.subtitle||'',data.units||'Amounts in INR unless stated otherwise']){const row=sheet.addRow([value]);if(width>1)sheet.mergeCells(row.number,1,row.number,width);row.font={name:'Calibri',size:row.number===1?16:11,bold:row.number<=2};row.height=row.number===1?25:row.number>=3?32:20;row.alignment={wrapText:true,vertical:'middle'};}
@@ -25,7 +25,7 @@ async function workbook(data){
   });
   if(data.notes){sheet.addRow([]);for(const text of data.notes.split('\n')){const row=sheet.addRow([text]);if(width>1)sheet.mergeCells(row.number,1,row.number,width);row.alignment={wrapText:true,vertical:'top'};row.height=Math.max(18,Math.ceil(text.length/(width*15))*15);}}
   sheet.columns.forEach((column,index)=>{column.width=index===0?48:data.formats?.[index]==='money'?23:Math.min(40,Math.max(14,data.columns[index].length+3));});
-  sheet.pageSetup.printTitlesRow='1:5';sheet.headerFooter.oddFooter='&LSpeedo One&CPage &P of &N&R&D';
+  sheet.pageSetup.printTitlesRow='1:5';sheet.headerFooter.oddFooter='&LDesktop ERP&CPage &P of &N&R&D';
   sheet.pageSetup.margins={left:0.3,right:0.3,top:0.4,bottom:0.5,header:0.2,footer:0.2};
   return Buffer.from(await book.xlsx.writeBuffer());
 }
@@ -39,6 +39,6 @@ function html(data){
 }
 async function pdf(data,BrowserWindow){
   const win=new BrowserWindow({show:false,webPreferences:{sandbox:true,contextIsolation:true,nodeIntegration:false,javascript:false}});
-  try{await win.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(html(data)));return await win.webContents.printToPDF({printBackground:true,preferCSSPageSize:true,displayHeaderFooter:true,headerTemplate:'<span></span>',footerTemplate:'<div style="font-size:8px;width:100%;text-align:center">Speedo One · Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'});}finally{win.destroy();}
+  try{await win.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(html(data)));return await win.webContents.printToPDF({printBackground:true,preferCSSPageSize:true,displayHeaderFooter:true,headerTemplate:'<span></span>',footerTemplate:'<div style="font-size:8px;width:100%;text-align:center">Desktop ERP · Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'});}finally{win.destroy();}
 }
 module.exports={validate,workbook,html,pdf};

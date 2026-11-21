@@ -1,8 +1,8 @@
 {
-  "name": "speedoone-pos",
+  "name": "desktop-erp",
   "version": "0.1.0",
   "private": true,
-  "description": "SpeedoOne desktop: keyboard-first local accounting",
+  "description": "DesktopERP desktop: keyboard-first local accounting",
   "main": "main.js",
   "scripts": {
     "start": "node scripts/start.js",
@@ -49,7 +49,8 @@
     "smoke:gst-entry": "node scripts/start.js test/gst-entry-smoke.js",
     "smoke:report-heads": "node scripts/start.js test/report-heads-smoke.js",
     "smoke:calculator": "node scripts/start.js test/calculator-smoke.js",
-    "smoke:reference-enter": "node scripts/start.js test/reference-enter-smoke.js"
+    "smoke:reference-enter": "node scripts/start.js test/reference-enter-smoke.js",
+    "smoke:rebrand": "node scripts/start.js test/rebrand-smoke.js"
   },
   "devDependencies": {
     "electron": "^45.2.3",

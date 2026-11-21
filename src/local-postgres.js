@@ -19,7 +19,7 @@ async function startLocalPostgres(dataDir,{encrypt=value=>Buffer.from(value),dec
   if(fs.existsSync(credentials))config=JSON.parse(await decrypt(fs.readFileSync(credentials)));
   else{
     if(fs.existsSync(path.join(directory,'PG_VERSION')))throw Error('PostgreSQL credentials are missing. Restore postgres.credentials before opening these books.');
-    config={user:'speedoone',password:crypto.randomBytes(32).toString('hex'),port:await freePort()};
+    config={user:'desktop-erp',password:crypto.randomBytes(32).toString('hex'),port:await freePort()};
     fs.writeFileSync(credentials,await encrypt(JSON.stringify(config)),{mode:0o600,flag:'wx'});
   }
   if(!fs.existsSync(path.join(directory,'PG_VERSION'))){

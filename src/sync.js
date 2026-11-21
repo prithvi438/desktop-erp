@@ -1,6 +1,6 @@
 'use strict';
-// Two-way sync with the Speedo One server over its Tally agent API
-// (Speedoone-Backend: services/tallySync.js). These books present themselves as a
+// Two-way sync with the Desktop ERP server over its Tally agent API
+// (Desktop-ERP-Backend: services/tallySync.js). These books present themselves as a
 // Tally company: masters and vouchers go up as Tally-format XML, and the server's own
 // changes come down as jobs in the same format.
 //
@@ -17,7 +17,7 @@ const os = require('node:os');
 const xml = require('./xml');
 const { VOUCHER_TYPES, BooksError } = require('./books');
 
-const DEFAULT_SERVER = 'https://app.speedoone.com/api';
+const DEFAULT_SERVER = process.env.DESKTOP_ERP_SYNC_URL || '';
 const UNSENT_TYPES = ['Quotation', 'Stock Journal']; // the server takes no vouchers of these types
 const WINDOW_DAYS = 31;
 
@@ -35,6 +35,7 @@ class SyncError extends BooksError {}
 
 function serverAddress(input) {
   let address = String(input || '').trim() || DEFAULT_SERVER;
+  if(!address)throw new SyncError('Enter your cloud server address');
   if (!/^https?:\/\//i.test(address)) address = `https://${address}`;
   const url = new URL(address);
   if (url.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(url.hostname)) throw new SyncError('The server address must start with https://');
@@ -115,13 +116,13 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
     try {
       response = await fetch(`${base}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(120000) });
     } catch (error) {
-      throw new SyncError(`Cannot reach Speedo One at ${base}: ${error.cause?.message || error.message}`);
+      throw new SyncError(`Cannot reach Desktop ERP at ${base}: ${error.cause?.message || error.message}`);
     }
     const raw = await response.text();
     let data;
     try { data = raw ? JSON.parse(raw) : {}; } catch { data = { message: raw.slice(0, 200) }; }
     if (!response.ok) {
-      const error = new SyncError(data.message || `Speedo One answered ${response.status}`);
+      const error = new SyncError(data.message || `Desktop ERP answered ${response.status}`);
       error.status = response.status;
       throw error;
     }
@@ -168,14 +169,14 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
       token: switched.token || session.token,
       body: {
         tally_company: company,
-        name: `${company} @ ${os.hostname()} (Speedo One Books)`,
+        name: `${company} @ ${os.hostname()} (Desktop ERP)`,
         device_name: os.hostname(),
-        tally_version: `Speedo One Books ${version}`,
+        tally_version: `Desktop ERP ${version}`,
         direction: direction==='upload'?'pull':'both',
         ...(first ? { from_date: first } : {}),
       },
     });
-    if (!out.agent_key) throw new SyncError(out.message || 'Speedo One did not issue a key for this computer');
+    if (!out.agent_key) throw new SyncError(out.message || 'Desktop ERP did not issue a key for this computer');
     session = {};
     keyStore.set(out.agent_key);
     support.setState('connection', out.connection?._id || '');
@@ -339,12 +340,12 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
     }
     for (let polls = 0; polls < 600; polls++) {
       if (batch.state === 'done') return batch.result || {};
-      if (batch.state === 'failed') throw new SyncError(batch.error || 'Speedo One could not import the upload');
-      if (batch.state === 'lost') throw new SyncError('Speedo One restarted during the upload. It will be sent again.');
+      if (batch.state === 'failed') throw new SyncError(batch.error || 'Desktop ERP could not import the upload');
+      if (batch.state === 'lost') throw new SyncError('Desktop ERP restarted during the upload. It will be sent again.');
       await wait(2000);
       ({ batch } = await request('GET', `/tally-agent/batches/${batch._id}`, { key }));
     }
-    throw new SyncError('Speedo One is still importing the last upload. It will be checked again.');
+    throw new SyncError('Desktop ERP is still importing the last upload. It will be checked again.');
   }
 
   // Masters go up only when something in them changed, because each upload makes the
@@ -356,8 +357,8 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
     const result = await upload(key, { kind: 'masters', xml: body });
     summary.masters = { created: result.created || 0, merged: result.merged || 0, failed: result.failed || 0 };
     for (const error of result.errors || []) summary.problems.push(`${error.type} ${error.name}: ${error.error}`);
-    if(result.failed||result.errors?.length)throw new SyncError('Some masters were refused by Speedo One. They remain pending; correct the reported problems and retry.');
-    if(typeof result.skipped==='string')throw new SyncError('Master import is disabled for this connection on Speedo One. Enable it before uploading vouchers.');
+    if(result.failed||result.errors?.length)throw new SyncError('Some masters were refused by Desktop ERP. They remain pending; correct the reported problems and retry.');
+    if(typeof result.skipped==='string')throw new SyncError('Master import is disabled for this connection on Desktop ERP. Enable it before uploading vouchers.');
     support.setState('masters_hash', hash);
   }
 
@@ -366,7 +367,7 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
   async function pushVouchers(key, state, summary) {
     let from = support.dirtyFrom();
     if (!from) return false;
-    if (state.from_date && from < fromYmd(state.from_date)) throw new SyncError(`Pending entries start on ${from}, before this connection's start date. Change its start date in Speedo One; these entries remain pending.`);
+    if (state.from_date && from < fromYmd(state.from_date)) throw new SyncError(`Pending entries start on ${from}, before this connection's start date. Change its start date in Desktop ERP; these entries remain pending.`);
     const last = [support.range().last || from, from].sort()[1];
     // Cleared first: a voucher changed while this runs sets it again for the next cycle.
     support.setState('inflight_from',from);
@@ -381,8 +382,8 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
         for (const error of result.errors || []) summary.problems.push(`${error.type} ${error.number} of ${error.date}: ${error.error}`);
         summary.conflicts = result.conflicts_total ?? summary.conflicts;
         needsMasters ||= Boolean(result.needs_masters);
-        if(result.failed||result.errors?.length)throw new SyncError('Some vouchers were refused by Speedo One. The upload range remains pending; correct the reported problems and retry.');
-        if(result.not_selected||typeof result.skipped==='string')throw new SyncError('Some voucher types are disabled in the Speedo One connector settings. Enable them and retry; the upload range remains pending.');
+        if(result.failed||result.errors?.length)throw new SyncError('Some vouchers were refused by Desktop ERP. The upload range remains pending; correct the reported problems and retry.');
+        if(result.not_selected||typeof result.skipped==='string')throw new SyncError('Some voucher types are disabled in the Desktop ERP connector settings. Enable them and retry; the upload range remains pending.');
       }
     } catch (error) {
       support.setDirtyFrom(earliest(from, support.dirtyFrom()));
@@ -403,14 +404,14 @@ function createSync({ support, keyStore, version = '0', fetch = globalThis.fetch
     busy = true;
     const summary = { received: 0, masters: null, vouchers: { created: 0, skipped: 0, failed: 0, conflicts: 0 }, conflicts: 0, problems: [] };
     try {
-      const state = await request('POST', '/tally-agent/heartbeat', { key, body: { tally_version: `Speedo One Books ${version}`, agent_version: version, host: os.hostname(), tally_online: true, company_open: true } });
+      const state = await request('POST', '/tally-agent/heartbeat', { key, body: { tally_version: `Desktop ERP ${version}`, agent_version: version, host: os.hostname(), tally_online: true, company_open: true } });
       const expectedBusiness = support.getState('business_id');
       if (state.business && expectedBusiness && String(state.business) !== expectedBusiness) throw new SyncError('The server connection belongs to another business. Sync stopped before transferring any records.');
       const expectedConnection = support.getState('connection');
       if (state.connection && expectedConnection && String(state.connection) !== expectedConnection) throw new SyncError('The server connection does not match this computer. Relink before syncing.');
       summary.conflicts = state.conflicts || 0;
-      if (state.enabled === false) throw new SyncError('Sync is paused for this computer on Speedo One');
-      if(state.direction==='push'&&support.getState('direction')==='upload')throw new SyncError('This connection allows web-to-local changes only. Enable local uploads in the Speedo One connector settings.');
+      if (state.enabled === false) throw new SyncError('Sync is paused for this computer on Desktop ERP');
+      if(state.direction==='push'&&support.getState('direction')==='upload')throw new SyncError('This connection allows web-to-local changes only. Enable local uploads in the Desktop ERP connector settings.');
       // Directions are named from the server's side: "push" sends to us only, "pull" takes from us only.
       if (state.direction !== 'pull'&&support.getState('direction')!=='upload') await takeJobs(key, summary);
       if (state.direction !== 'push') {

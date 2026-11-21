@@ -4,7 +4,7 @@ const {DatabaseSync}=require('node:sqlite');
 const {openBooks}=require('./books');
 
 function openDesktopBooks(dataDir){
-  if(!process.env.SPEEDOONE_PG_URL)throw Error('Local PostgreSQL must be running before opening the books');
+  if(!process.env.DESKTOP_ERP_PG_URL)throw Error('Local PostgreSQL must be running before opening the books');
   const source=path.join(dataDir,'books.db');
   let books=openBooks(source);
   try{
@@ -15,9 +15,9 @@ function openDesktopBooks(dataDir){
       try{
         sqlite=new DatabaseSync(source,{readOnly:true});
         const version=sqlite.prepare('PRAGMA user_version').get().user_version;
-        if(!version||version>books.schemaVersion)throw Error('These SQLite books need a different version of Speedo One');
+        if(!version||version>books.schemaVersion)throw Error('These SQLite books need a different version of Desktop ERP');
         const tables=new Set(sqlite.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(row=>row.name));
-        if(!['meta','groups','ledgers','items','vouchers','entries'].every(name=>tables.has(name)))throw Error('The existing file is not a Speedo One books database');
+        if(!['meta','groups','ledgers','items','vouchers','entries'].every(name=>tables.has(name)))throw Error('The existing file is not a Desktop ERP books database');
         if(sqlite.prepare('PRAGMA integrity_check').get().integrity_check!=='ok'||sqlite.prepare('PRAGMA foreign_key_check').all().length)throw Error('Existing SQLite books failed integrity checks. Migration was not performed.');
         // VACUUM INTO captures committed WAL data; the source is never upgraded or modified.
         sqlite.prepare('VACUUM INTO ?').run(stage);sqlite.close();sqlite=null;

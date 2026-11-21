@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-report-directory-'));process.env.SPEEDOONE_DATA_DIR=out;require('../main');
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-report-directory-'));process.env.DESKTOP_ERP_DATA_DIR=out;require('../main');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 app.whenReady().then(async()=>{
  await require('./wait-for-window')();const win=BrowserWindow.getAllWindows()[0],page=win.webContents;win.show();win.focus();page.focus();
@@ -23,7 +23,7 @@ app.whenReady().then(async()=>{
 
 
  try{
-  await js("localStorage.setItem('speedoone-appearance','light');location.reload()");await sleep(1100);
+  await js("localStorage.setItem('desktop-erp-appearance','light');location.reload()");await sleep(1100);
   assert.equal(await js('document.documentElement.dataset.theme'),'light');
   fs.writeFileSync(path.join(out,'light-dashboard.png'),(await page.capturePage()).toPNG());
   await press('l',['control','shift']);assert.equal(await js('document.documentElement.dataset.theme'),'dark');

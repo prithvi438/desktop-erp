@@ -1,8 +1,8 @@
-﻿#Desktop ERP
+﻿# Desktop ERP
 
 A keyboard-first desktop application for accounting, billing, inventory and business reporting. Built with Electron and JavaScript, with a local PostgreSQL database managed by the app.
 
-This repository contains **Speedoone-Pos2.0**, the desktop application. It can run locally without the separate Speedo One web, backend or mobile repositories. Connecting to the Speedo One backend is optional.
+This repository contains **desktop-erp**, the desktop application. It can run locally without the separate Desktop ERP web, backend or mobile repositories. Cloud synchronization is not exposed or started by this desktop application.
 
 ## Requirements
 
@@ -55,7 +55,7 @@ npm run dist:win
 The installer is generated under `dist/`:
 
 ```text
-Speedo-One-Books-<version>-Setup-x64.exe
+Desktop-ERP-<version>-Setup-x64.exe
 ```
 
 The installer includes Electron and PostgreSQL, so users do not need Node.js or PostgreSQL installed separately. The build does not upload a GitHub release. Builds are unsigned unless signing credentials are configured separately. The installer configuration is in `electron-builder.yml`.
@@ -73,7 +73,7 @@ Close the development app before launching an installed build: both use the same
 - Daybook, transaction registers, ledger accounts and stock registers.
 - Categorized financial and inventory reports, with ledger drill-down and Excel/PDF export on supported reports.
 - Dashboard charts, a user greeting, light/dark themes and an optional floating calculator.
-- Local backup/restore and optional Speedo One synchronization.
+- Local backup and restore.
 
 Financial and statutory summaries are generated from the configured books. Review classifications, disclosures and report coverage before statutory use; this project does not claim that every report is filing-ready.
 
@@ -102,10 +102,12 @@ Report headings and report lists have separate keyboard focus. Enter moves into 
 
 ## Data, backups and recovery
 
+Existing installations continue using their previous data directory automatically. New installations use the directory below. Older backup archives remain readable.
+
 On Windows, the default application data location is:
 
 ```text
-%APPDATA%\speedoone-pos
+%APPDATA%\desktop-erp
 ```
 
 PostgreSQL listens on the loopback interface. The app manages its lifecycle and stores its cluster under `postgres/`. Keep `postgres.credentials` with the cluster; it contains connection information protected by the app's OS-backed storage.
@@ -115,24 +117,18 @@ Use **Settings > Backup & restore** to create `.speedobook` backups. Do not copy
 To use a separate data directory, set it before launch. For example, in PowerShell:
 
 ```powershell
-$env:SPEEDOONE_DATA_DIR = Join-Path $env:LOCALAPPDATA 'SpeedoOne-Development'
+$env:DESKTOP_ERP_DATA_DIR = Join-Path $env:LOCALAPPDATA 'DesktopERP-Development'
 npm start
 ```
 
-This selects a different books directory; it does not move existing books. Remove that session override with `Remove-Item Env:SPEEDOONE_DATA_DIR` before returning to the default location.
+This selects a different books directory; it does not move existing books. Remove that session override with `Remove-Item Env:DESKTOP_ERP_DATA_DIR` before returning to the default location.
 
 ### Common startup issues
 
-- **Books already open:** close other Speedo One instances using the same data directory, then retry. Do not delete database files or credentials to bypass the message.
+- **Books already open:** close other Desktop ERP instances using the same data directory, then retry. Do not delete database files or credentials to bypass the message.
 - **Missing Electron/PostgreSQL binaries:** run `npm ci` with dependency scripts enabled and verify that security software has not quarantined the downloaded binaries.
 - **Old UI after editing source:** close and restart the app; the desktop renderer is not configured for automatic hot reload.
 - **Packaged and development builds conflict:** run only one against a given books directory, or use a separate development directory as shown above.
-
-## Optional cloud connection
-
-Use **Settings > Sync with Speedo One** to connect to a compatible backend. Local work does not require pairing. Sync uses the backend's Tally agent endpoints and is not a substitute for backups; not every local master or inventory field is synchronized.
-
-Never commit connection keys, credentials, real books, attachments or backup archives. The repository's `.gitignore` excludes these runtime artifacts, dependencies and generated installers.
 
 ## Project structure
 

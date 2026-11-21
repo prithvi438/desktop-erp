@@ -1,7 +1,7 @@
 'use strict';
 const {app,BrowserWindow}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-settlement-reopen-'));
-process.env.SPEEDOONE_DATA_DIR=out;require('../main');
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-settlement-reopen-'));
+process.env.DESKTOP_ERP_DATA_DIR=out;require('../main');
 app.whenReady().then(async()=>{
  await require('./wait-for-window')();const page=BrowserWindow.getAllWindows()[0].webContents;
  const js=code=>page.executeJavaScript(code),api=(method,args={})=>js(`window.books.call(${JSON.stringify(method)},${JSON.stringify(args)})`);

@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-ledger-account-'));process.env.SPEEDOONE_DATA_DIR=out;require('../main');
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-ledger-account-'));process.env.DESKTOP_ERP_DATA_DIR=out;require('../main');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 app.whenReady().then(async()=>{
  await require('./wait-for-window')();const win=BrowserWindow.getAllWindows()[0],page=win.webContents;win.setSize(1200,760);win.show();win.focus();page.focus();

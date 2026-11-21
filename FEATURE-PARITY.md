@@ -1,7 +1,7 @@
 # Desktop Books parity audit
 
 Audited on 9 November 2026 against the web Books navigation in
-`../Speedo-One-ERP-Frontend-Web/src/layouts/AppLayout.jsx` (the accounting section),
+`../ERP-Frontend-Web/src/layouts/AppLayout.jsx` (the accounting section),
 the pricebook and cheque pages, `pages/products/DocFormPage.jsx`,
 `pages/products/ProductSettingsPage.jsx`, and the desktop accounting engine.
 The web file `pages/BooksPage.jsx` is the library catalog, not accounting Books.

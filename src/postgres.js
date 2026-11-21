@@ -27,7 +27,7 @@ function sqlForPostgres(source){
 }
 
 class PostgresDatabase {
-  constructor(file,config={connectionString:process.env.SPEEDOONE_PG_URL}){
+  constructor(file,config={connectionString:process.env.DESKTOP_ERP_PG_URL}){
     if(!config.connectionString&&!config.host)throw Error('PostgreSQL has not been started');
     const {port1,port2}=new MessageChannel();this.port=port1;this.signal=new SharedArrayBuffer(4);this.flag=new Int32Array(this.signal);
     this.worker=new Worker(path.join(__dirname,'postgres-worker.js'),{workerData:{port:port2,signal:this.signal,config},transferList:[port2]});

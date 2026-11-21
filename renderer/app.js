@@ -12,7 +12,6 @@ import { push, pop, top, atHome, goHome, chrome } from './router.js';
 import { ledgerList } from './ledgers.js';
 import { itemList } from './items.js';
 import * as reports from './reports.js';
-import { syncScreen } from './sync.js';
 import { pricebookList } from './pricebooks.js';
 import { chequeRegister } from './cheques.js';
 import { createVouchers, DASHBOARD_VOUCHERS } from './create.js';
@@ -127,7 +126,6 @@ const CATALOG = [
     ['Additional fields',customFieldList],
     ['Company', companyForm],
     ['User profile',userProfileForm],
-    ['Sync with Speedo One', syncScreen],
     ['Quit', quit],
   ]],
 ];
@@ -155,14 +153,14 @@ const REPORT_GROUPS = [
   group('Statutory summaries',['GST returns','Taxes & HSN']),
   group('Banking & setup',['Bank reconciliation','Cheques','Chart of accounts','Financial years']),
 ];
-const SETTINGS_GROUPS=[group('Inventory & pricing',['Inventory features','Item discount & offer rules','Retail controls']),group('Forms & company',['Financial reporting','Forms & feature settings','Additional fields','Company','User profile']),group('Data & connection',['Backup & restore','Sync with Speedo One','Quit'])];
+const SETTINGS_GROUPS=[group('Inventory & pricing',['Inventory features','Item discount & offer rules','Retail controls']),group('Forms & company',['Financial reporting','Forms & feature settings','Additional fields','Company','User profile']),group('Data & backup',['Backup & restore','Quit'])];
 const MENUS = [
   {label:'Masters',hint:'Items, parties & accounts',open:createMasters},
   {label:'Create Vouchers',hint:'Sales, purchases & journals',open:()=>createVouchers()},
   {label:'Daybook',hint:'Transactions by date or period',open:reports.dayBook},
   {label:'Registers',hint:'Voucher types & entries',open:()=>registersWorkspace()},
   {label:'Reports',hint:'Review your business',groups:REPORT_GROUPS},
-  {label:'Settings',hint:'Preferences & cloud sync',groups:SETTINGS_GROUPS},
+  {label:'Settings',hint:'Preferences & local data',groups:SETTINGS_GROUPS},
 ];
 for(const menu of MENUS)if(menu.groups)menu.open=()=>reportDirectory(menu.groups,null,menu.label);
 const menuFor = entry => MENUS.findIndex(menu=>menu.label===entry.label||menu.groups?.some(([,entries])=>entries.includes(entry)));
@@ -244,7 +242,6 @@ function dashboard() {
       nodes.forEach((node) => node.removeAttribute('aria-current'));
       select(index);
       refreshLedgers();
-      showSync();
       profile=await call('userProfile');updateGreeting();
       calculatorEnabled=Boolean((await call('settings')).useCalculator);chrome();
       const [s, vouchers,groups] = await Promise.all([call('statements', {asOf:reportDate(),from:activePeriod().from}), call('dayBook', {from:activePeriod().from,to:reportDate()}),call('groups')]);
@@ -321,24 +318,8 @@ function companyForm() {
   };
 }
 
-// The pill in the header: whether these books are offline, in step with the server, or behind.
-async function showSync() {
-  const status = await window.sync.call('status');
-  const [text, tone] = !status.paired ? ['', '']
-    : !status.enabled ? ['Sync paused', '']
-    : status.busy ? ['Syncing', 'warn']
-    : status.lastError ? ['Sync problem', 'bad']
-    : status.waitingFrom ? ['Changes to upload', 'warn']
-    : !status.lastSync ? ['Ready to sync', '']
-    : ['Last sync completed', 'good'];
-  const pill = document.getElementById('sync');
-  pill.textContent = text;
-  pill.hidden=!text;
-  pill.className = tone;
-}
-
 async function quit() {
-  if (await confirmBox('Quit Speedo One?')) window.books.quit();
+  if (await confirmBox('Quit Desktop ERP?')) window.books.quit();
 }
 
 // Ctrl+K, or typing on the dashboard: jump to any screen, or to any ledger's statement.
@@ -389,7 +370,6 @@ window.addEventListener('keydown', (event) => {
 });
 
 document.getElementById('today').textContent = showDate(today());
-setInterval(showSync, 15000);
 drawNav();
 showCompany();
 push(dashboard());

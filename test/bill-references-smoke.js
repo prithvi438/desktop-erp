@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-reference-ui-'));process.env.SPEEDOONE_DATA_DIR=out;require('../main');const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-reference-ui-'));process.env.DESKTOP_ERP_DATA_DIR=out;require('../main');const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 app.whenReady().then(async()=>{await require('./wait-for-window')();const win=BrowserWindow.getAllWindows()[0],page=win.webContents;win.show();win.focus();page.focus();const js=c=>page.executeJavaScript(c),api=(m,a={})=>js(`window.books.call(${JSON.stringify(m)},${JSON.stringify(a)})`);
  async function press(keyCode,modifiers=[]){page.sendInputEvent({type:'keyDown',keyCode,modifiers});page.sendInputEvent({type:'keyUp',keyCode,modifiers});await sleep(180);}
  try{const groups=await api('groups'),p=(await api('saveLedger',{name:'Reference customer',groupId:groups.find(g=>g.name==='Sundry Debtors').id})).id,cash=(await api('ledgers')).find(l=>l.name==='Cash').id,sales=(await api('ledgers')).find(l=>l.name==='Sales').id;

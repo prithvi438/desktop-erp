@@ -4,8 +4,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const out = fs.mkdtempSync(path.join(os.tmpdir(), 'speedoone-create-'));
-process.env.SPEEDOONE_DATA_DIR = out;
+const out = fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-erp-create-'));
+process.env.DESKTOP_ERP_DATA_DIR = out;
 require('../main');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 app.whenReady().then(async () => {

@@ -7,7 +7,7 @@ const digest=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).dig
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF9sAAAAASUVORK5CYII=','base64');
 
 test('SQLite migrates once into PostgreSQL with IDs, money, details and file bytes preserved',()=>{
-  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-migrate-')),source=path.join(dir,'books.db');
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-migrate-')),source=path.join(dir,'books.db');
   let old=openBooks(source,{driver:'sqlite'}),book;
   try{
     const groups=old.api.groups(),debtor=groups.find(g=>g.name==='Sundry Debtors').id;
@@ -31,7 +31,7 @@ test('SQLite migrates once into PostgreSQL with IDs, money, details and file byt
 });
 
 test('PostgreSQL backup restores transactionally, verifies contents and clears cloud pairing',()=>{
-  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-pg-backup-'));
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-pg-backup-'));
   const book=openBooks(path.join(dir,'books.db')),file=path.join(dir,'copy.speedobook');
   try{
     const group=book.api.groups().find(row=>row.name==='Sundry Debtors').id;
@@ -66,7 +66,7 @@ test('PostgreSQL backup restores transactionally, verifies contents and clears c
 });
 
 test('same books cannot be opened concurrently',()=>{
-  const file=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-pg-owner-')),'books.db');
+  const file=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-pg-owner-')),'books.db');
   const book=openBooks(file);try{assert.throws(()=>openBooks(file),/already open/);}finally{book.close();}
   openBooks(file).close();
 });

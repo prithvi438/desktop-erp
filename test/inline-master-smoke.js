@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-process.env.SPEEDOONE_DATA_DIR=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-inline-'));
+process.env.DESKTOP_ERP_DATA_DIR=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-inline-'));
 require('../main');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 app.whenReady().then(async()=>{

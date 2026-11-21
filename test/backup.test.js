@@ -8,7 +8,7 @@ test('CSV exports preserve commas and quotes without executing spreadsheet formu
   assert.throws(()=>tableCsv({columns:['Name'],rows:[['too','many']]}),/Invalid report/);
 });
 test('backup captures committed WAL data and attachments; restored books lose their cloud link',t=>{
-  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-backup-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-backup-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
   const current=path.join(dir,'books.db'),copy=path.join(dir,'backup.db'),book=openBooks(current,{driver:'sqlite'});
   const group=book.api.groups().find(r=>r.name==='Sundry Debtors').id;
   book.api.setCompany({name:'Backup Company'});

@@ -7,8 +7,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const out = process.env.SMOKE_OUT || fs.mkdtempSync(path.join(os.tmpdir(), 'speedoone-smoke-'));
-process.env.SPEEDOONE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'speedoone-books-'));
+const out = process.env.SMOKE_OUT || fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-erp-smoke-'));
+process.env.DESKTOP_ERP_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-erp-books-'));
 require('../main.js');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -263,13 +263,6 @@ app.whenReady().then(async () => {
     await enter('20000');
     await sleep(250);
     assert.match(await read('main'), /Rent\s+Indirect Expenses\s+20,000\.00\s+12,000\.00\s+8,000\.00\s+60%/);
-    await home();
-
-    // Until the books are linked to Speedo One they stay on this computer.
-    await go('sync with speedo one', /^Sync with Speedo One$/);
-    assert.match(await read('main'), /kept on this computer only/);
-    assert.equal(await read('#sync'), 'Offline books');
-    await shot('6-sync');
     await home();
 
     // Typing on the dashboard opens the palette with what was typed.

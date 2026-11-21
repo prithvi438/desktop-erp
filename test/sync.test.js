@@ -1,6 +1,6 @@
 'use strict';
-// Runs the sync against a stand-in for the Speedo One server that follows its Tally
-// agent API as read from Speedoone-Backend. It checks what is sent and how the server's
+// Runs the sync against a stand-in for the Desktop ERP server that follows its Tally
+// agent API as read from Desktop-ERP-Backend. It checks what is sent and how the server's
 // changes are applied; it cannot prove the real server accepts it.
 const test = require('node:test');
 const assert = require('node:assert/strict');

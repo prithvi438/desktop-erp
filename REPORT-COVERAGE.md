@@ -1,6 +1,6 @@
 # Report reference and coverage
 
-The installed TallyPrime window was identified on 12 November 2026, but desktop access timed out. No installed report screens or proprietary files were extracted. The implementation uses Speedo One's own data and the following official documentation as behavioural references:
+The installed TallyPrime window was identified on 12 November 2026, but desktop access timed out. No installed report screens or proprietary files were extracted. The implementation uses Desktop ERP's own data and the following official documentation as behavioural references:
 
 - [Accounting and financial reports](https://help.tallysolutions.com/accounting-financial-reports-tally/)
 - [Cash flow and projection](https://help.tallysolutions.com/tally-prime/accounting-financial-reports/cash-flow-and-projection-report-tally/)

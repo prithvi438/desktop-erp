@@ -5,8 +5,9 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const {startLocalPostgres}=require('../src/local-postgres');
 const {openDesktopBooks}=require('../src/desktop-books');
 const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-const directory=process.env.SPEEDOONE_DATA_DIR||path.join(app.getPath('appData'),'speedoone-pos');
-app.setName('speedoone-pos');
+const {profileDirectory}=require('../src/legacy-compat');
+const directory=process.env.DESKTOP_ERP_DATA_DIR||profileDirectory(app.getPath('appData'));
+app.setName('desktop-erp');
 app.setPath('userData',directory);
 app.whenReady().then(async()=>{
   const source=path.join(directory,'books.db');
@@ -15,7 +16,7 @@ app.whenReady().then(async()=>{
     const before=fs.existsSync(source)?hash(source):null;
     if(!await safeStorage.isAsyncEncryptionAvailable())throw Error('Secure credential storage is unavailable');
     server=await startLocalPostgres(directory,{encrypt:value=>safeStorage.encryptStringAsync(value),decrypt:async value=>(await safeStorage.decryptStringAsync(value)).result});
-    process.env.SPEEDOONE_PG_URL=server.connectionString;
+    process.env.DESKTOP_ERP_PG_URL=server.connectionString;
     books=openDesktopBooks(directory);server.takeOwnership();
     if(before&&hash(source)!==before)throw Error('The SQLite source changed during migration');
     const summary={backend:books.database.dialect,sqliteUnchanged:before?true:null,

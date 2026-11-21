@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow,dialog}=require('electron'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const out=fs.mkdtempSync(path.join(os.tmpdir(),'speedoone-report-exports-'));process.env.SPEEDOONE_DATA_DIR=out;
+const out=fs.mkdtempSync(path.join(os.tmpdir(),'desktop-erp-report-exports-'));process.env.DESKTOP_ERP_DATA_DIR=out;
 let exported=[];dialog.showSaveDialog=async(_win,options)=>{const filePath=path.join(out,`${exported.length+1}-`+options.defaultPath);exported.push(filePath);return {canceled:false,filePath};};require('../main');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 app.whenReady().then(async()=>{await require('./wait-for-window')();const win=BrowserWindow.getAllWindows()[0],page=win.webContents;win.show();win.focus();page.focus();
